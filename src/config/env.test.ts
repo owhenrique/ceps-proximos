@@ -20,7 +20,7 @@ describe('loadEnv', () => {
       cacheTtl: { addressSeconds: 2592000, resultSeconds: 86400, notFoundSeconds: 3600 },
       nominatim: {
         url: 'https://nominatim.openstreetmap.org',
-        userAgent: 'bc_giross/1.0 (+https://github.com/owhenrique/bc_giross)',
+        userAgent: 'ceps-proximos/1.0 (+https://github.com/owhenrique/ceps-proximos)',
       },
       rateLimit: { max: 60, windowSeconds: 60 },
       trustProxy: false,

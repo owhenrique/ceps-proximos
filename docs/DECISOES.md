@@ -47,7 +47,7 @@ Cada decisão tem o contexto, o que foi escolhido e o porquê. Alternativas desc
 
 **Por quê:**
 - O Prisma não suporta os tipos geográficos do PostGIS, o que obrigaria a usar SQL cru.
-- A corretude do cálculo de distância é critério de avaliação, e com Haversine no domínio o cálculo fica visível e testável.
+- A corretude do cálculo de distância é central no projeto, e com Haversine no domínio o cálculo fica visível e testável.
 - No volume de uma UF ou do Brasil (~931 mil CEPs), o *bounding box* com índice resolve em milissegundos.
 
 **Quando revisitar:** raios grandes, buscas por polígono ou volume muito maior. Aí o PostGIS com índice GiST é o passo natural.
@@ -89,16 +89,16 @@ A `uf` permite filtrar o seed e gravar as UFs carregadas, que respondem a regra 
 
 O CNEFE do Brasil tem ~3,7 GB compactado (~19 GB em CSV) e 931.499 CEPs. Depois de processado, uma linha por CEP, o arquivo fica com dezenas de MB (medido na US1: `ceps.csv.gz` com 8,2 MB para 898.455 CEPs; `ceps-removidos.csv` com 1,3 MB e 33.022 CEPs). Esse tamanho cabe no git sem LFS, então o repositório entrega a base do **Brasil inteiro**.
 
-O CSV unificado é gerado **uma vez, pelo mantenedor**, com o `build-dataset` lendo os ZIPs do IBGE de uma pasta local (sem lógica de download). O avaliador só sobe o `docker compose`: o seed carrega o CSV e aceita `SEED_UFS=SP,RJ` para limitar as UFs. A regra de cobertura (D13) consulta as UFs carregadas na tabela, então uma carga parcial continua coerente.
+O CSV unificado é gerado **uma vez, pelo mantenedor**, com o `build-dataset` lendo os ZIPs do IBGE de uma pasta local (sem lógica de download). Quem usa o projeto só sobe o `docker compose`: o seed carrega o CSV e aceita `SEED_UFS=SP,RJ` para limitar as UFs. A regra de cobertura (D13) consulta as UFs carregadas na tabela, então uma carga parcial continua coerente.
 
 ## D10 — CSV compactado no git
 
-O script gerador fica no repositório como receita auditável, junto com um relatório (totais por UF e CEPs removidos). O avaliador não precisa rodá-lo.
+O script gerador fica no repositório como receita auditável, junto com um relatório (totais por UF e CEPs removidos). Quem usa o projeto não precisa rodá-lo.
 
 Formatos descartados:
 - `.sql` com INSERTs: 2 a 3 vezes maior, carga lenta e acoplado ao schema.
 - `pg_dump`: binário, não auditável e dependente da versão do Postgres.
-- Só o script: obrigaria o avaliador a baixar GBs do IBGE.
+- Só o script: obrigaria quem usa o projeto a baixar GBs do IBGE.
 
 O seed carrega via `COPY` (lib `pg`, já que o Prisma não tem `COPY`), pode rodar várias vezes e limpa o cache de resultados ao recarregar.
 

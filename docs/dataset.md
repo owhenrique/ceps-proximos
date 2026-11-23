@@ -80,7 +80,7 @@ origem (lat, lon)
 2. **Distância exata na aplicação:** o Haversine (R = 6371,0088 km) roda no domínio, testado contra distâncias conhecidas. O filtro usa a distância exata: um CEP a 1,004 km fica fora, mesmo que a saída arredondada fosse `1.00`.
 3. **Saída:** a lista inteira é ordenada e vai para o cache; `pagina` e `limite` só cortam essa lista.
 
-**Por que não PostGIS (D3):** o Prisma não suporta os tipos geográficos do PostGIS, o que obrigaria a usar SQL cru, e a corretude da distância é critério de avaliação: com Haversine no domínio, o cálculo fica visível e testável. Com ~900 mil CEPs, a bounding box com índice resolve em milissegundos. O PostGIS (`ST_DWithin` com GiST) é o passo natural para raios grandes, buscas por polígono ou volumes muito maiores.
+**Por que não PostGIS (D3):** o Prisma não suporta os tipos geográficos do PostGIS, o que obrigaria a usar SQL cru, e a corretude da distância é central no projeto: com Haversine no domínio, o cálculo fica visível e testável. Com ~900 mil CEPs, a bounding box com índice resolve em milissegundos. O PostGIS (`ST_DWithin` com GiST) é o passo natural para raios grandes, buscas por polígono ou volumes muito maiores.
 
 ---
 

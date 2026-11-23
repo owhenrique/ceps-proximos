@@ -14,7 +14,7 @@ const envSchema = z.object({
   NOMINATIM_USER_AGENT: z
     .string()
     .min(1)
-    .default('bc_giross/1.0 (+https://github.com/owhenrique/bc_giross)'),
+    .default('ceps-proximos/1.0 (+https://github.com/owhenrique/ceps-proximos)'),
   CACHE_ADMIN_TOKEN: z
     .string()
     .optional()

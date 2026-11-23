@@ -1,4 +1,4 @@
-# bc-giross — CEPs Próximos
+# CEPs Próximos
 
 API que recebe um CEP e devolve os CEPs num raio de 1 km, cada um com a distância até a origem. A base (`data/ceps.csv.gz`, 898.455 CEPs do Brasil com latitude e longitude) vem do CNEFE 2022 do IBGE e é carregada no Postgres por um seed.
 
@@ -19,56 +19,32 @@ curl localhost:3000/ceps-proximos/04551-000
 - **[CI e Docker](./docs/ci.md)**: pipeline do GitHub Actions, testes e containers.
 - **[Registro de Decisões](./docs/DECISOES.md)**: todas as decisões, com contexto, alternativas e o porquê.
 
-O planejamento do desenvolvimento fica na branch [`docs`](https://github.com/owhenrique/bc_giross/tree/docs): as [histórias de usuário](https://github.com/owhenrique/bc_giross/blob/docs/HISTORIAS.md) (US1 a US12) e a [spec de cada uma](https://github.com/owhenrique/bc_giross/tree/docs/specs), com critérios de aceite, decisões, tarefas e o registro de testes. Cada história virou uma branch e um PR.
+O planejamento do desenvolvimento fica na branch [`docs`](https://github.com/owhenrique/ceps-proximos/tree/docs): as [histórias de usuário](https://github.com/owhenrique/ceps-proximos/blob/docs/HISTORIAS.md) (US1 a US12) e a [spec de cada uma](https://github.com/owhenrique/ceps-proximos/tree/docs/specs), com critérios de aceite, decisões, tarefas e o registro de testes. Cada história virou uma branch e um PR.
 
 ---
 
 ## O problema
 
-> **Business Case – Desenvolvedor Fullstack Jr.**
->
-> A Giross precisa localizar regiões de entrega próximas a um CEP de referência (ex.: para agrupar entregas de uma mesma área ou avaliar a cobertura de uma nova praça).
+Localizar as regiões próximas a um CEP de referência serve, por exemplo, para agrupar entregas de uma mesma área ou avaliar a cobertura de uma nova praça. Este projeto pessoal é uma API REST em Node.js (sem front-end) que recebe um CEP e devolve todos os CEPs num raio de 1 km, cada um com a distância até o CEP de origem.
 
-**Desafio:** construir uma API REST em Node.js (sem front-end) que receba um CEP e devolva todos os CEPs num raio de 1 km, cada um com a distância calculada até o CEP de origem.
+### Objetivos
 
-### Requisitos funcionais
+- **Busca:** `GET /ceps-proximos/:cep` devolve os CEPs num raio de 1 km, ordenados pela distância, com `cep` e `distancia_km` (2 casas decimais) de cada um.
+- **Geolocalização:** a coordenada do CEP vem de uma base própria, com APIs públicas só como fallback.
+- **Cache:** o geocoding de um CEP já consultado e o resultado de uma origem já processada ficam no Redis, com TTL justificado e limpeza manual.
+- **Erros:** CEP inválido, CEP não encontrado e API externa fora do ar têm respostas distintas.
+- **Limites:** rate limit na entrada e nas chamadas às APIs externas.
 
-1. Endpoint `GET /ceps-proximos/:cep`.
-2. Buscar a geolocalização (lat/lng) do CEP informado usando uma API pública ou uma base própria, com a decisão justificada no README.
-3. A partir da lat/lng do CEP de origem, encontrar os demais CEPs num raio de 1 km.
-4. Calcular a distância entre o CEP de origem e cada CEP encontrado.
-5. Retornar uma lista ordenada pela distância, com `cep` e `distancia_km` (2 casas decimais) de cada um.
+### Onde está cada parte
 
-### Cache
-
-- Cache do geocoding de um CEP já consultado e do resultado da busca no raio para uma origem já processada.
-- Cache em memória é aceitável; Redis é diferencial.
-- Definir e justificar um TTL razoável no README.
-
-### Requisitos técnicos
-
-- Node.js (Express, Fastify ou similar).
-- Tratamento de erros: CEP inválido, CEP inexistente e indisponibilidade da API externa.
-- README explicando a estratégia para "buscar CEPs num raio" e o trade-off entre precisão e performance.
-
-### Diferenciais
-
-Redis para o cache, rate limiting para a API externa de geocoding, endpoint para limpar o cache manualmente e Dockerfile.
-
-### Critérios de avaliação
-
-Corretude do cálculo de distância, estratégia para localizar CEPs próximos, eficácia do cache, qualidade e legibilidade do código e tratamento de casos de borda.
-
-### Como a solução atende
-
-| Requisito | Onde |
+| Objetivo | Onde |
 | --- | --- |
 | `GET /ceps-proximos/:cep`, ordenado, com `distancia_km` | rota enxuta e `/detalhes` com origem e endereço ([Guia Rápido](./docs/getting-started.md#5-endpoints)) |
 | Geolocalização justificada | base própria do CNEFE, com fallback BrasilAPI → Nominatim ([Origem e Fallback](./docs/geocoding.md)) |
 | Raio e distância | bounding box no Postgres + Haversine no domínio, testado contra distâncias conhecidas ([Base de CEPs](./docs/dataset.md#4-estratégia-da-busca-no-raio)) |
 | Cache e TTL justificado | Redis: endereço e coordenada 30 d, resultado 24 h, não encontrado 1 h ([Cache](./docs/cache.md#2-ttls)) |
 | Erros | `400`, `404`, `422`, `503` e `500` com `{ erro: { codigo, mensagem } }` ([Arquitetura](./docs/architecture.md#5-tratamento-de-erros)) |
-| Diferenciais | Redis, rate limit de entrada e de saída, `DELETE /cache` com token e Docker Compose |
+| Operação | Redis, rate limit de entrada e de saída, `DELETE /cache` com token e Docker Compose |
 
 ---
 
