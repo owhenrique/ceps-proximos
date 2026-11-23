@@ -10,13 +10,13 @@ criada_em: 2026-10-26
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: feat/us2-ceps-proximos
-merge_request: https://github.com/owhenrique/bc_giross/pull/2
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/2
 ---
 
 # US2 — Consultar CEPs próximos
 
 ## História
-Como **Giross**, quero consultar os CEPs num raio de um CEP de referência, com a distância de cada um, para agrupar entregas e avaliar a cobertura de uma praça.
+Como **consumidor da API**, quero consultar os CEPs num raio de um CEP de referência, com a distância de cada um, para agrupar entregas e avaliar a cobertura de uma praça.
 
 ## Contexto
 A US1 entregou a base `data/ceps.csv.gz` (898.455 CEPs, `cep;uf;latitude;longitude`), a função `haversineKm` no domínio e o esqueleto do projeto. Ainda não existem API, banco nem compose. Esta US entrega o primeiro uso da base: subir tudo com `docker compose up` e consultar `GET /ceps-proximos/:cep`. A origem vem só da base. O endereço da BrasilAPI e as respostas para CEP fora da base ficam para a US3, o cache para a US4 e o fallback Nominatim para a US5.
@@ -176,9 +176,9 @@ Não contam (config, dados, testes, docs, gerado):
 - `README.md`, `docs/specs/us2-ceps-proximos.md`
 
 ## Limite de tamanho
-- **Estimativa:** ~360 linhas de lógica (`bc_giross`), soma da lista acima.
+- **Estimativa:** ~360 linhas de lógica (`ceps-proximos`), soma da lista acima.
 - **Não contam:** testes, docs, config (`Dockerfile`, compose, `.env.example`, `.dockerignore`, `*.prisma`, `prisma.config.ts`), lockfile, migration e client Prisma gerados (`npx prisma migrate dev`, `npx prisma generate`).
-- **Medição**, em `bc_giross`, sobre os commits da branch:
+- **Medição**, em `ceps-proximos`, sobre os commits da branch:
 
   ```bash
   git diff --numstat main...HEAD | awk -F'\t' '
@@ -250,6 +250,6 @@ Em 2026-10-27, por subagente em contexto limpo, base `main`.
 
 ## Riscos e pontos em aberto
 - **Prisma 7 (driver adapter, `prisma.config.ts`, client gerado fora de `node_modules`)**: a configuração muda entre versões. Fixar a versão estável no `package.json` e seguir a documentação dela. Se o client gerado cair em `src/`, ignorá-lo no ESLint e no git.
-- **Seed do Brasil inteiro a cada `up`**: ~900 mil linhas via COPY, com estimativa de alguns segundos a dezenas de segundos. Medir e registrar o tempo; o avaliador pode usar `SEED_UFS=SP` para subir mais rápido.
+- **Seed do Brasil inteiro a cada `up`**: ~900 mil linhas via COPY, com estimativa de alguns segundos a dezenas de segundos. Medir e registrar o tempo; quem usa o projeto pode usar `SEED_UFS=SP` para subir mais rápido.
 - **Índice `(latitude, longitude)`**: o B-tree composto só restringe pela latitude; a longitude filtra dentro da faixa. Em raio de 1 km, a faixa de latitude é estreita e isso basta (D3). Conferir com `EXPLAIN ANALYZE` na conferência manual.
 - **`04551000` ~174 vizinhos**: o número do D4 veio do protótipo e serve só como ordem de grandeza.

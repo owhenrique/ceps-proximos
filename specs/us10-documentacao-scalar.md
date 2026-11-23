@@ -10,13 +10,13 @@ criada_em: 2026-10-28
 implementada_em: 2026-10-28
 verificada_em: 2026-10-28
 branch: feat/us10-documentacao-scalar
-merge_request: https://github.com/owhenrique/bc_giross/pull/12
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/12
 ---
 
 # US10 — Documentação da API com Scalar
 
 ## História
-Como **integrador da Giross**, quero uma documentação navegável do contrato da API, com exemplos e erros, para integrar sem ler o código nem adivinhar os formatos.
+Como **integrador**, quero uma documentação navegável do contrato da API, com exemplos e erros, para integrar sem ler o código nem adivinhar os formatos.
 
 ## Contexto
 Hoje o contrato existe só na seção "Contrato" do README: rotas, exemplos e a tabela de erros, escritos à mão e sem nada que garanta que batem com o código. Esta US cria um `openapi.yaml` escrito à mão como fonte da verdade, serve esse documento numa UI do Scalar em `/docs` (fora de `production`) e acrescenta um teste de contrato que quebra quando o código e o yaml divergem.
@@ -105,7 +105,7 @@ Nenhuma.
 ## Limite de tamanho
 A US inteira sai num PR, mergeável sozinho, com **até 500 linhas de lógica** adicionadas ou modificadas. Remoção não conta.
 
-- **Estimativa:** ~30 linhas (bc_giross: ~30). É a soma da lista acima.
+- **Estimativa:** ~30 linhas (ceps-proximos: ~30). É a soma da lista acima.
 - **Não contam:** testes, documentação, configuração e dados (`openapi.yaml`), lockfiles, migrations e código gerado. Nenhum gerado.
 - **Medição**, sobre os commits da branch:
 

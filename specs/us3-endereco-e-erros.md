@@ -10,18 +10,18 @@ criada_em: 2026-10-27
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: us3-endereco-e-erros
-merge_request: https://github.com/owhenrique/bc_giross/pull/4
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/4
 ---
 
 # US3 — Endereço da origem e erros claros
 
 ## História
-Como **Giross**, quero ver o endereço do CEP consultado e receber erros claros para CEP não encontrado ou fora da cobertura, para confiar na resposta e entender por que ela falhou.
+Como **consumidor da API**, quero ver o endereço do CEP consultado e receber erros claros para CEP não encontrado ou fora da cobertura, para confiar na resposta e entender por que ela falhou.
 
 ## Contexto
 Esta US integra a BrasilAPI v2 (D12) para preencher `origem.endereco` e para explicar o motivo quando o CEP não está na base: nenhum serviço de CEP o encontra (o que não prova que ele não existe, já que essas bases são atualizadas de tempos em tempos), a UF dele não foi carregada (D13) ou ele existe mas a base não tem a coordenada (CEP sujo ou novo, D7). Os erros novos já nascem como `AppError` mais uma linha no catálogo (US8).
 
-Como o enunciado pede só a lista de CEPs, a consulta tem duas rotas. A principal, `GET /ceps-proximos/:cep`, é enxuta: origem, paginação e vizinhos, sem chamar a BrasilAPI quando o CEP está na base. A completa, `GET /ceps-proximos/:cep/detalhes`, traz a coordenada, a fonte e o endereço da origem, além do raio.
+Como o caso principal precisa só da lista de CEPs, a consulta tem duas rotas. A principal, `GET /ceps-proximos/:cep`, é enxuta: origem, paginação e vizinhos, sem chamar a BrasilAPI quando o CEP está na base. A completa, `GET /ceps-proximos/:cep/detalhes`, traz a coordenada, a fonte e o endereço da origem, além do raio.
 
 Onde entra no mapa: o cache (US4) vai guardar o endereço e o resultado, e o fallback Nominatim (US5) busca a coordenada de um CEP fora da base, de UF carregada.
 
@@ -59,7 +59,7 @@ Decisões que valem aqui: D11, D12, D13, D14, D22, D23, D24, D26, D27, D28, D29.
 - P: CEP na base, mas a BrasilAPI responde `404`? → R: lista com `endereco: null`, porque a base é a fonte da coordenada e o `404` da BrasilAPI pode mascarar uma falha interna dela (D12).
 - P: Chamada que passa de 5 req/s? → R: falha imediata, sem chamar a BrasilAPI. Ela é tratada como indisponível.
 - P: Códigos e mensagens dos erros novos → R: aprovados: `422 CEP_FORA_DA_COBERTURA` "CEP fora da cobertura da base", `422 CEP_SEM_GEOLOCALIZACAO` "Não foi possível obter a coordenada do CEP", `503 PROVEDOR_INDISPONIVEL` "Serviço de consulta de CEP indisponível". Campos vazios da BrasilAPI saem como `null`.
-- P: Onde entram a coordenada, a fonte e o endereço, se o enunciado pede só a lista de CEPs? → R: Numa segunda rota, a detalhada. `/ceps-proximos/:cep` é a principal e enxuta.
+- P: Onde entram a coordenada, a fonte e o endereço, se o caso principal precisa só da lista de CEPs? → R: Numa segunda rota, a detalhada. `/ceps-proximos/:cep` é a principal e enxuta.
 - P: Caminho da rota detalhada? → R: `/ceps-proximos/:cep/detalhes`.
 - P: O que a rota simples devolve? → R: `{ origem: "<cep>", paginacao, ceps }`, mantendo `?pagina=&limite=`.
 - P: A rota simples chama a BrasilAPI? → R: só com o CEP fora da base, para dar os mesmos erros claros. Com o CEP na base, não chama (mais rápida e não gasta as 5 req/s).
@@ -128,9 +128,9 @@ Nenhuma.
 - `docs/HISTORIAS.md` — alterar: a US3 com as decisões e as duas rotas; a US10 lista `GET /ceps-proximos/:cep/detalhes` (doc, não conta)
 
 ## Limite de tamanho
-- **Estimativa:** ~210 linhas de lógica (`bc_giross`), soma da lista acima.
+- **Estimativa:** ~210 linhas de lógica (`ceps-proximos`), soma da lista acima.
 - **Não contam:** testes, docs, config e lockfile; nenhum arquivo gerado.
-- **Medição**, em `bc_giross`, sobre os commits da branch:
+- **Medição**, em `ceps-proximos`, sobre os commits da branch:
 
   ```bash
   git diff --numstat main...HEAD | awk -F'\t' '

@@ -10,7 +10,7 @@ criada_em: 2026-10-27
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: feat/us8-error-middleware
-merge_request: https://github.com/owhenrique/bc_giross/pull/3
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/3
 ---
 
 # US8 — Error middleware com catálogo de erros
@@ -82,9 +82,9 @@ Nenhuma.
 - `src/presentation/http/app.test.ts` — sem mudar asserts de corpo/status (teste, não conta)
 
 ## Limite de tamanho
-- **Estimativa:** ~100 linhas de lógica (`bc_giross`), soma da lista acima.
+- **Estimativa:** ~100 linhas de lógica (`ceps-proximos`), soma da lista acima.
 - **Não contam:** testes, docs, config, lockfile; nenhum arquivo gerado.
-- **Medição**, em `bc_giross`, sobre os commits da branch:
+- **Medição**, em `ceps-proximos`, sobre os commits da branch:
 
   ```bash
   git diff --numstat main...HEAD | awk -F'\t' '
@@ -134,7 +134,7 @@ Em 2026-10-27, subagente em contexto limpo, base `e4fc4e9` (merge do PR #2; `mai
 - **Suítes:** `npm test` 13 arquivos, 89 testes, 0 falhas; `npm run lint` e `npm run typecheck` sem erros. Sem curl real (sem Postgres); respostas cobertas por supertest em `app.test.ts`.
 - **Critérios 1 a 7:** todos atendidos (evidência em `errors.ts`, `error-catalog.ts`, `nearby-ceps-route.ts` e testes; `app.test.ts` não foi tocado).
 - **Entregável:** sim, funciona só com esta branch; 6 commits, todos da US8.
-- **Linhas medidas:** 72 / 500 (`bc_giross`).
+- **Linhas medidas:** 72 / 500 (`ceps-proximos`).
 - **Achados:** nenhum Alta ou Média. Baixa: `find-nearby-ceps.test.ts` foi reformatado por inteiro (aspas e quebras), ruído no diff; `docs/HISTORIAS.md` alterado fora da lista, mas registrado em "Decisões".
 - **Decisão do usuário:** aceitar como está.
 - **Não verificado:** curl contra servidor real com Postgres.

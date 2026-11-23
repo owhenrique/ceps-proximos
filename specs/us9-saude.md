@@ -10,7 +10,7 @@ criada_em: 2026-10-28
 implementada_em: 2026-10-28
 verificada_em: 2026-10-28
 branch: feat/us9-saude
-merge_request: https://github.com/owhenrique/bc_giross/pull/11
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/11
 ---
 
 # US9 — Healthcheck (`/saude`)
@@ -67,7 +67,7 @@ A US9 roda depois da US12 e antes da US10. A US10 documenta o `GET /saude` no Op
 ## Limite de tamanho
 A US inteira sai num PR, mergeável sozinho, com **até 500 linhas de lógica** adicionadas ou modificadas. Remoção não conta.
 
-- **Estimativa:** ~10 linhas (bc_giross: ~10) — soma da lista acima.
+- **Estimativa:** ~10 linhas (ceps-proximos: ~10) — soma da lista acima.
 - **Não contam:** testes, documentação, configuração e dados, lockfiles, migrations e código gerado. Nenhum gerado.
 - **Medição**, sobre os commits da branch:
 

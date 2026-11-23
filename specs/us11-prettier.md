@@ -10,7 +10,7 @@ criada_em: 2026-10-27
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: us11-prettier
-merge_request: https://github.com/owhenrique/bc_giross/pull/5
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/5
 ---
 
 # US11 — Formatação automática com Prettier
@@ -94,9 +94,9 @@ No mapa (`docs/HISTORIAS.md`), ela roda logo depois da US3 e antes da US4. O nú
 A lista da reformatação é a medida de hoje. A fonte de verdade é a saída do `npm run format`: se aparecer arquivo fora dela, ele entra no mesmo commit, sem edição manual.
 
 ## Limite de tamanho
-- **Estimativa:** ~51 linhas de lógica (`bc_giross`), todas de reformatação; não há lógica nova.
+- **Estimativa:** ~51 linhas de lógica (`ceps-proximos`), todas de reformatação; não há lógica nova.
 - **Não contam:** testes, docs, config (`package.json`, `.prettierignore`, `eslint.config.js`, `docker-compose.yml`) e lockfile; nenhum arquivo gerado.
-- **Medição**, em `bc_giross`, sobre os commits da branch:
+- **Medição**, em `ceps-proximos`, sobre os commits da branch:
 
   ```bash
   git diff --numstat main...HEAD | awk -F'\t' '
@@ -153,7 +153,7 @@ Data: 2026-10-27. Verificador: subagente em contexto limpo, só reportou. Base: 
 | README com `format:check` | Atendido |
 
 - **Entregável:** sim, funciona só com esta branch (4 commits, todos da US11).
-- **Linhas medidas:** 51 / 500 (`bc_giross`).
+- **Linhas medidas:** 51 / 500 (`ceps-proximos`).
 - **Suítes:** `npm test` 15 arquivos, 133 testes, 0 falhas; `typecheck`, `lint` e `format:check` sem erros.
 - **Achados:** Baixa — `status`, `implementada_em` e `merge_request` vazios na spec; esperado antes do `/pato/close-spec`.
 - **Não verificado:** `npm ci` limpo (warning ERESOLVE).

@@ -10,13 +10,13 @@ criada_em: 2026-10-27
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: feat/us4-cache
-merge_request: https://github.com/owhenrique/bc_giross/pull/6
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/6
 ---
 
 # US4 — Cache
 
 ## História
-Como **Giross**, quero respostas rápidas para CEPs já consultados, para não esperar nem depender do banco e das APIs externas a cada chamada.
+Como **consumidor da API**, quero respostas rápidas para CEPs já consultados, para não esperar nem depender do banco e das APIs externas a cada chamada.
 
 ## Contexto
 Hoje cada chamada a `GET /ceps-proximos/:cep` e a `/detalhes` faz o mesmo trabalho do zero. O `findNearbyCeps` (`src/application/find-nearby-ceps.ts`) consulta o Postgres (`findByCep` + `findInBox`), calcula o Haversine de cada candidato e ordena a lista. No `/detalhes`, ou com o CEP fora da base, também chama a BrasilAPI, limitada a 5 req/s (D22). Esta US põe um cache Redis na frente das duas coisas, como definem a D17, a D19 e a D20. No mapa (`docs/HISTORIAS.md`), ela vem depois da US3 e da US11. A US5 (Nominatim) e a US6 (limpeza manual) dependem dela.
@@ -139,9 +139,9 @@ Hoje cada chamada a `GET /ceps-proximos/:cep` e a `/detalhes` faz o mesmo trabal
 - Docs (não contam): `README.md` (Redis, variáveis, comportamento degradado) e `docs/DECISOES.md` (decisões desta US: degradação, `REDIS_URL` obrigatória, seed sem Redis, só o lookup em cache para CEP fora da base, tabela `loaded_uf`).
 
 ## Limite de tamanho
-- **Estimativa:** ~246 linhas de lógica (`bc_giross`), soma da lista acima.
+- **Estimativa:** ~246 linhas de lógica (`ceps-proximos`), soma da lista acima.
 - **Não contam:** testes, docs, config (`docker-compose.yml`, `.env.example`, `package.json`), lockfile, `prisma/schema.prisma`, a migration e o client gerado em `src/generated/` (`npx prisma generate`, já fora do git).
-- **Medição**, em `bc_giross`, sobre os commits da branch:
+- **Medição**, em `ceps-proximos`, sobre os commits da branch:
 
   ```bash
   git diff --numstat main...HEAD | awk -F'\t' '

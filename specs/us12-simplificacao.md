@@ -10,7 +10,7 @@ criada_em: 2026-10-28
 implementada_em: 2026-10-28
 verificada_em: 2026-10-28
 branch: feat/us12-simplificacao
-merge_request: https://github.com/owhenrique/bc_giross/pull/10
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/10
 ---
 
 # US12 — Simplificação do projeto
@@ -19,7 +19,7 @@ merge_request: https://github.com/owhenrique/bc_giross/pull/10
 Como **time de desenvolvimento**, quero os rate limits em memória, sem depender do Redis, e o código sem arquivos de poucas linhas nem trechos repetidos, para entender a solução de relance e evoluí-la com menos peças.
 
 ## Contexto
-O enunciado é para uma vaga Jr com prazo de 2 dias, e quem lê o código, inclusive quem avalia o teste, paga por cada peça a mais. Esta US deixa os dois rate limits em memória, por processo, sem depender do Redis: a entrada (60 req/min por IP, com `429 LIMITE_EXCEDIDO`) no store padrão do `express-rate-limit` e a saída (BrasilAPI 5 req/s, Nominatim 1 req/s) no `WindowRateLimiter`. Também organiza o código em pastas por responsabilidade, concentra as chamadas externas no `limitedFetch` e os erros da borda HTTP numa tabela, leva o cálculo dos vizinhos para o domínio e faz o lint barrar import entre camadas. O contrato da API não muda.
+O projeto é pequeno, e quem lê o código paga por cada peça a mais. Esta US deixa os dois rate limits em memória, por processo, sem depender do Redis: a entrada (60 req/min por IP, com `429 LIMITE_EXCEDIDO`) no store padrão do `express-rate-limit` e a saída (BrasilAPI 5 req/s, Nominatim 1 req/s) no `WindowRateLimiter`. Também organiza o código em pastas por responsabilidade, concentra as chamadas externas no `limitedFetch` e os erros da borda HTTP numa tabela, leva o cálculo dos vizinhos para o domínio e faz o lint barrar import entre camadas. O contrato da API não muda.
 
 No mapa (`docs/HISTORIAS.md`), a US12 roda depois da US8 e antes da US9; o número é só de cadastro.
 
@@ -59,7 +59,7 @@ No mapa (`docs/HISTORIAS.md`), a US12 roda depois da US8 e antes da US9; o núme
 - `ALL_UFS` (a repetição fica) e `data/ceps-removidos.csv` (fica no repositório) → fora.
 
 ## Decisões e respostas do usuário
-- P: O projeto escalou demais para um teste técnico? → R: Sim. Reduzir arquivos e complexidade sem perder o que o enunciado pede.
+- P: O projeto escalou demais para o tamanho do problema? → R: Sim. Reduzir arquivos e complexidade sem perder os objetivos.
 - P: Como organizar as interfaces da aplicação? → R: Em pastas por responsabilidade: `cache/`, `errors/` e `providers/`, com cada porta num arquivo próprio, e o caso de uso `find-nearby-ceps.ts` e a porta `cep-repository.ts` em `use-cases/`. As chaves do cache ficam junto da interface `Cache`.
 - P: Onde ficam o catálogo e os códigos de erro da apresentação? → R: Num arquivo só, `errors/errors.ts`, e o catálogo é a fonte dos códigos.
 - P: Onde ficam os erros que só a camada HTTP gera (401, 404 de rota, 400 genérico, 429, 500)? → R: Numa tabela `HTTP_ERRORS` no `errors.ts`, com `sendError(res, entry)`.
@@ -291,7 +291,7 @@ Configuração e documentação (não contam):
 ## Limite de tamanho
 A US inteira sai num PR, mergeável sozinho, com **até 500 linhas de lógica** adicionadas ou modificadas. Remoção não conta.
 
-- **Estimativa:** ~270 linhas (bc_giross: ~270). Linhas que só mudam de arquivo (o catálogo no `errors.ts`) contam como adicionadas, porque o git não as reconhece como renomeação, e já estão na estimativa.
+- **Estimativa:** ~270 linhas (ceps-proximos: ~270). Linhas que só mudam de arquivo (o catálogo no `errors.ts`) contam como adicionadas, porque o git não as reconhece como renomeação, e já estão na estimativa.
 - **Não contam:** testes (incluindo `tests/fakes/`), documentação, configuração e dados, lockfiles e código gerado. O `src/generated/` (Prisma, gerado no `npm run postinstall`) não muda.
 - **Medição**, sobre os commits da branch:
 

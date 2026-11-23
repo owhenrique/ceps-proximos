@@ -10,13 +10,13 @@ criada_em: 2026-10-27
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: feat/us5-fallback-nominatim
-merge_request: https://github.com/owhenrique/bc_giross/pull/7
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/7
 ---
 
 # US5 — Fallback de coordenada (Nominatim)
 
 ## História
-Como **Giross**, quero resultados mesmo quando o CEP de referência não está na base, para não perder a consulta em CEPs novos ou mal cadastrados no Censo.
+Como **consumidor da API**, quero resultados mesmo quando o CEP de referência não está na base, para não perder a consulta em CEPs novos ou mal cadastrados no Censo.
 
 ## Contexto
 Um CEP fora da base passa pela BrasilAPI (`findNearbyCeps`, em `src/application/find-nearby-ceps.ts`). Quando ele existe e é de uma UF carregada, é um CEP novo ou um "sujo" removido pelo `build-dataset` (p90 > 2 km, D4/D11). Esta US busca a coordenada dele no Nominatim, a partir do endereço da BrasilAPI, validando a cidade e a UF, como definem a D11 (e a continuação dela) e a D22. No mapa (`docs/HISTORIAS.md`), ela vem depois da US4, cujo cache ela reusa.
@@ -27,7 +27,7 @@ Um CEP fora da base passa pela BrasilAPI (`findNearbyCeps`, em `src/application/
 - [x] 3. Dado um endereço da BrasilAPI sem rua, sem cidade ou sem UF, então `422 CEP_SEM_GEOLOCALIZACAO`, sem chamar o Nominatim.
 - [x] 4. Dado o Nominatim fora do ar (timeout de 3 s, erro de rede, status ≠ 200, corpo inválido) ou o limite de 1 req/s atingido, então `503 PROVEDOR_INDISPONIVEL`, e nada vai para o cache de geocoding.
 - [x] 5. Dado uma coordenada aceita, então ela fica em cache por `CACHE_TTL_ADDRESS_SECONDS` (padrão 30 d). Dado "sem match" (critério 2), ele fica em cache por `CACHE_TTL_NOT_FOUND_SECONDS` (padrão 1 h). Dentro do TTL, a mesma consulta não chama o Nominatim. O resultado com os vizinhos entra no `result:<raio>:<cep>` junto com a fonte, então a repetição responde `fonte = "nominatim"` sem ir ao banco nem ao Nominatim.
-- [x] 6. Dado qualquer chamada ao Nominatim, então ela leva o header `User-Agent` com o valor de `NOMINATIM_USER_AGENT` (padrão `bc_giross/1.0 (+https://github.com/owhenrique/bc_giross)`) e vai para `NOMINATIM_URL` (padrão `https://nominatim.openstreetmap.org`). As chamadas ficam limitadas a 1 req/s.
+- [x] 6. Dado qualquer chamada ao Nominatim, então ela leva o header `User-Agent` com o valor de `NOMINATIM_USER_AGENT` (padrão `ceps-proximos/1.0 (+https://github.com/owhenrique/ceps-proximos)`) e vai para `NOMINATIM_URL` (padrão `https://nominatim.openstreetmap.org`). As chamadas ficam limitadas a 1 req/s.
 - [x] 7. Dado um CEP fora da base de UF **não** carregada, então continua `422 CEP_FORA_DA_COBERTURA`, sem chamar o Nominatim. Dado um CEP na base, então continua `fonte = "base"`, também sem chamar o Nominatim.
 
 ## Escopo
@@ -88,7 +88,7 @@ Um CEP fora da base passa pela BrasilAPI (`findNearbyCeps`, em `src/application/
   - Limite atingido, erro, timeout, status ≠ 200 ou corpo inválido → `warn` + `unavailable`.
 - **Ambiente** (`src/config/env.ts`):
   - `NOMINATIM_URL: z.string().url().default('https://nominatim.openstreetmap.org')`.
-  - `NOMINATIM_USER_AGENT: z.string().min(1).default('bc_giross/1.0 (+https://github.com/owhenrique/bc_giross)')`.
+  - `NOMINATIM_USER_AGENT: z.string().min(1).default('ceps-proximos/1.0 (+https://github.com/owhenrique/ceps-proximos)')`.
   - O `Env` ganha `nominatim: { url, userAgent }`.
 - **Composição** (`src/index.ts`): `new OriginGeocoder(new NominatimGeocoder({ baseUrl, userAgent, logger }), cache, { foundTtlSeconds: env.cacheTtl.addressSeconds, noMatchTtlSeconds: env.cacheTtl.notFoundSeconds })`, passado ao `findNearbyCeps`.
 - **Compose e `.env.example`:** a `api` recebe `NOMINATIM_URL` e `NOMINATIM_USER_AGENT` com `${...:-padrão}`, e o `.env.example` traz as duas, comentadas com o padrão.
@@ -118,9 +118,9 @@ Um CEP fora da base passa pela BrasilAPI (`findNearbyCeps`, em `src/application/
 - Docs (não contam): `README.md` (fallback, variáveis, política de uso do Nominatim) e `docs/DECISOES.md` (decisões desta US: escopo só UF carregada, `503` para Nominatim fora, sem rua → `422`, TTLs, comparação normalizada, busca sem `state` com `limit=5`).
 
 ## Limite de tamanho
-- **Estimativa:** ~205 linhas de lógica (`bc_giross`), soma da lista acima.
+- **Estimativa:** ~205 linhas de lógica (`ceps-proximos`), soma da lista acima.
 - **Não contam:** testes, docs, config (`docker-compose.yml`, `.env.example`). Nenhum arquivo gerado.
-- **Medição**, em `bc_giross`, sobre os commits da branch:
+- **Medição**, em `ceps-proximos`, sobre os commits da branch:
 
   ```bash
   git diff --numstat main...HEAD | awk -F'\t' '
@@ -172,7 +172,7 @@ Não se aplica.
 - **Suítes:** `npm test` 199/199 (20 arquivos), `typecheck`, `lint` e `format:check` sem erros.
 - **Critérios:** 1 a 7 atendidos (testes de unidade e `app.test.ts`).
 - **Entregável:** sim. Os dois endpoints funcionam só com esta branch, que parte de `main` e tem só commits da US5.
-- **Linhas medidas:** 229 de 500 (`bc_giross`).
+- **Linhas medidas:** 229 de 500 (`ceps-proximos`).
 - **Achados:** nenhum (Alta, Média ou Baixa).
 - **Não verificado:** teste manual (docker compose, Nominatim real, Redis), que fica para o `/pato/close-spec`; texto do README.
 - **Decisão do usuário:** aceitar como está e registrar.

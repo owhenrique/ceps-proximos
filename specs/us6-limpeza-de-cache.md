@@ -10,7 +10,7 @@ criada_em: 2026-10-27
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: feat/us6-limpeza-de-cache
-merge_request: https://github.com/owhenrique/bc_giross/pull/8
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/8
 ---
 
 # US6 — Limpeza de cache protegida
@@ -111,7 +111,7 @@ Nenhuma.
 ## Limite de tamanho
 A US inteira sai num PR, mergeável sozinho, com **até 500 linhas de lógica** adicionadas ou modificadas. Remoção não conta.
 
-- **Estimativa:** ~123 linhas (bc_giross: ~123), soma da lista acima.
+- **Estimativa:** ~123 linhas (ceps-proximos: ~123), soma da lista acima.
 - **Não contam:** testes, documentação, configuração e dados, lockfiles, migrations e código gerado. Nenhum arquivo gerado nesta US (`src/generated/prisma` não muda).
 - **Medição**, sobre os commits da branch:
 

@@ -10,7 +10,7 @@ criada_em: 2026-10-27
 implementada_em: 2026-10-27
 verificada_em: 2026-10-27
 branch: feat/us7-rate-limit
-merge_request: https://github.com/owhenrique/bc_giross/pull/9
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/9
 ---
 
 # US7 — Rate limit da API
@@ -102,7 +102,7 @@ Nenhuma.
 ## Limite de tamanho
 A US inteira sai num PR, mergeável sozinho, com **até 500 linhas de lógica** adicionadas ou modificadas. Remoção não conta.
 
-- **Estimativa:** ~153 linhas (bc_giross: ~153).
+- **Estimativa:** ~153 linhas (ceps-proximos: ~153).
 - **Não contam:** testes, documentação, configuração e dados, lockfiles, migrations e código gerado. Nenhum arquivo gerado nesta US (`src/generated/prisma` não muda).
 - **Medição**, sobre os commits da branch:
 

@@ -3,7 +3,7 @@
 Status: implementado
 verificada_em: 2026-10-26
 implementada_em: 2026-10-26
-merge_request: https://github.com/owhenrique/bc_giross/pull/1
+merge_request: https://github.com/owhenrique/ceps-proximos/pull/1
 Origem: `docs/HISTORIAS.md` (US1) · Decisões: D4, D5, D6, D7, D8, D9, D10, D25, D27, D28
 Estimativa: ~200 linhas de lógica (limite: 500)
 
@@ -59,7 +59,7 @@ Scripts npm: `build-dataset`, `test`, `lint`, `typecheck`.
 - Manual: rodar nos 27 ZIPs; conferir que `01001000` está em `ceps-removidos.csv` e que o total fica próximo de 931 mil CEPs menos os removidos.
 
 ## Limite de tamanho
-Teto: 500 linhas de lógica (não conta teste, fixture, dados nem lockfile). Medição, em `bc_giross`:
+Teto: 500 linhas de lógica (não conta teste, fixture, dados nem lockfile). Medição, em `ceps-proximos`:
 
 ```bash
 grep -cv '^\s*$' $(git ls-files 'src/*.ts' 'scripts/*.ts' | grep -v -e '\.test\.ts' -e fixtures.ts) | awk -F: '{s+=$2} END {print s}'

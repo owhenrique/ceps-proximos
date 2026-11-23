@@ -1,13 +1,13 @@
 # Histórias de usuário — API de CEPs próximos
 
-Quebra do business case da Giross em histórias entregáveis. Cada uma vira uma spec, uma branch e um PR, com até 500 linhas de lógica. As decisões que valem para todas estão no [`DECISOES.md`](https://github.com/owhenrique/bc_giross/blob/main/docs/DECISOES.md) da `main`, e o enunciado, no [README](https://github.com/owhenrique/bc_giross/blob/main/README.md).
+Quebra do projeto em histórias entregáveis. Cada uma vira uma spec, uma branch e um PR, com até 500 linhas de lógica. As decisões que valem para todas estão no [`DECISOES.md`](https://github.com/owhenrique/ceps-proximos/blob/main/docs/DECISOES.md) da `main`, e os objetivos do projeto, no [README](https://github.com/owhenrique/ceps-proximos/blob/main/README.md).
 
 ## Personas
-- **Giross** (time de operações/logística, consumindo a API): consulta CEPs próximos a um CEP de referência.
+- **Consumidor da API** (ex.: um time de logística): consulta CEPs próximos a um CEP de referência.
 - **Operador da API**: mantém o serviço no ar (cache, proteção contra abuso).
 - **Mantenedor da API**: gera e audita a base de CEPs.
 - **Time de desenvolvimento**: evolui a API (US técnicas, só quando se sustentam sozinhas).
-- **Integrador da Giross**: o desenvolvedor que lê o contrato para integrar com a API.
+- **Integrador**: o desenvolvedor que lê o contrato para integrar com a API.
 
 ## Visão geral
 
@@ -41,14 +41,14 @@ História técnica de dados, aprovada explicitamente. Juntar com a US2 daria ~54
 - Dado o processamento concluído, então um relatório traz os totais por UF, os removidos e o tempo.
 
 Contexto:
-- O script é rodado pelo mantenedor, uma vez, lendo os ZIPs de uma pasta local, sem lógica de download. Os 27 ZIPs já estão em `giross_teste_tecnico/cnefe-raw`.
-- O avaliador nunca roda o script, porque usa o CSV commitado.
+- O script é rodado pelo mantenedor, uma vez, lendo os ZIPs de uma pasta local, sem lógica de download. Os 27 ZIPs já estão em `cnefe-raw`, fora do repositório.
+- Quem usa o projeto nunca roda o script, porque usa o CSV commitado.
 - Inclui o esqueleto do projeto (Node 24, TypeScript, Vitest, ESLint) e a função Haversine no domínio.
 
 Fica para outra US: carga no Postgres, endpoint, docker compose (US2).
 
 ## US2 — Consultar CEPs próximos
-Como **Giross**, quero consultar os CEPs num raio de um CEP de referência, com a distância de cada um, para agrupar entregas e avaliar a cobertura de uma praça.
+Como **consumidor da API**, quero consultar os CEPs num raio de um CEP de referência, com a distância de cada um, para agrupar entregas e avaliar a cobertura de uma praça.
 
 - Dado o `docker compose up`, então o Postgres sobe, o seed carrega o CSV (filtrável por `SEED_UFS`, idempotente) e a API responde.
 - Dado um CEP na base, quando chamo `GET /ceps-proximos/04551000`, então recebo `{ origem: "04551000", paginacao, ceps: [{cep, distancia_km}] }`, ordenado por distância, com 2 casas decimais e sem a origem.
@@ -60,7 +60,7 @@ Como **Giross**, quero consultar os CEPs num raio de um CEP de referência, com 
 Fica para outra US: endereço e erros da BrasilAPI (US3), cache (US4), fallback (US5).
 
 ## US3 — Endereço da origem e erros claros
-Como **Giross**, quero ver o endereço do CEP consultado e receber erros claros para CEP inexistente ou fora da cobertura, para confiar na resposta e entender por que ela falhou.
+Como **consumidor da API**, quero ver o endereço do CEP consultado e receber erros claros para CEP inexistente ou fora da cobertura, para confiar na resposta e entender por que ela falhou.
 
 - Dado um CEP válido, quando chamo `GET /ceps-proximos/:cep/detalhes`, então `origem.endereco` traz rua, bairro, cidade e UF da BrasilAPI v2 (campos vazios como `null`).
 - Dado `GET /ceps-proximos/:cep` (resumo), então a resposta é enxuta (`origem` é só o CEP, sem raio nem endereço) e, com o CEP na base, não chama a BrasilAPI.
@@ -92,7 +92,7 @@ Tamanho: medido de novo com `prettier@3` sobre a main com a US3, a reformataçã
 Fica para outra US: hook de pre-commit (husky/lint-staged).
 
 ## US4 — Cache
-Como **Giross**, quero respostas rápidas para CEPs já consultados, para não esperar nem depender das APIs externas a cada chamada.
+Como **consumidor da API**, quero respostas rápidas para CEPs já consultados, para não esperar nem depender das APIs externas a cada chamada.
 
 - Dado um CEP já consultado, então a segunda chamada não acessa o banco nem a BrasilAPI.
 - TTLs: endereço 30 d, resultado 24 h, inexistente 1 h, configuráveis. O seed limpa o cache de resultados.
@@ -103,7 +103,7 @@ Como **Giross**, quero respostas rápidas para CEPs já consultados, para não e
 Fica para outra US: limpeza manual (US6).
 
 ## US5 — Fallback de coordenada (Nominatim)
-Como **Giross**, quero resultados mesmo quando o CEP de referência não está na base, para não perder a consulta em CEPs novos ou mal cadastrados no Censo.
+Como **consumidor da API**, quero resultados mesmo quando o CEP de referência não está na base, para não perder a consulta em CEPs novos ou mal cadastrados no Censo.
 
 - Dado um CEP existente fora da base (ex.: `01001000`), então a coordenada vem do Nominatim, com `origem.fonte = "nominatim"`.
 - Dado que o Nominatim devolve uma cidade ou UF diferente da BrasilAPI, então o resultado é rejeitado e a resposta é `422 sem geolocalização`.
@@ -171,7 +171,7 @@ Decisões: a rota é consultada só por uma pessoa, nunca pelo container, então
 Fica fora do card: checagem do Postgres, do Redis e dos provedores.
 
 ## US10 — Documentação da API com Scalar
-Como **integrador da Giross**, quero uma documentação navegável do contrato da API, com exemplos e erros, para integrar sem ler o código nem adivinhar os formatos.
+Como **integrador**, quero uma documentação navegável do contrato da API, com exemplos e erros, para integrar sem ler o código nem adivinhar os formatos.
 
 - Dado `NODE_ENV` diferente de `production`, quando abro `/docs`, então vejo a UI do Scalar com todos os endpoints existentes: `GET /ceps-proximos/:cep`, `GET /ceps-proximos/:cep/detalhes`, `GET /saude`, `DELETE /cache` e `DELETE /cache/:cep` (com o esquema Bearer).
 - Dado o mesmo ambiente, então `GET /docs/openapi.json` devolve o documento OpenAPI 3.1.
