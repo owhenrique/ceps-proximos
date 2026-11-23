@@ -85,7 +85,7 @@ O caso de uso, o catálogo de erros e as rotas não mudam.
 ## 3. Estrutura de Diretórios
 
 ```text
-bc_giross/
+ceps-proximos/
 ├── .github/workflows/        # CI: lint, typecheck, format e testes em todo PR
 ├── data/                     # base de CEPs (ceps.csv.gz), removidos e relatório
 ├── docs/                     # guias técnicos e registro de decisões

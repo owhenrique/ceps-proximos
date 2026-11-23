@@ -78,7 +78,7 @@ Os scripts `start`, `dev` e `seed` leem o `.env` (`--env-file-if-exists`). Fora 
 | `CACHE_TTL_RESULT_SECONDS` | `86400` (24 h) | TTL do resultado (origem + lista de vizinhos) |
 | `CACHE_TTL_NOT_FOUND_SECONDS` | `3600` (1 h) | TTL do CEP que a BrasilAPI não encontra e do "sem match" do Nominatim |
 | `NOMINATIM_URL` | `https://nominatim.openstreetmap.org` | base do Nominatim |
-| `NOMINATIM_USER_AGENT` | `bc_giross/1.0 (+https://github.com/owhenrique/bc_giross)` | `User-Agent` enviado ao Nominatim (a política de uso exige identificar o cliente) |
+| `NOMINATIM_USER_AGENT` | `ceps-proximos/1.0 (+https://github.com/owhenrique/ceps-proximos)` | `User-Agent` enviado ao Nominatim (a política de uso exige identificar o cliente) |
 | `CACHE_ADMIN_TOKEN` | vazio | token dos endpoints de limpeza de cache (mínimo de 12 caracteres; vazio desliga os endpoints) |
 | `RATE_LIMIT_MAX` | `60` | requisições por IP dentro da janela |
 | `RATE_LIMIT_WINDOW_SECONDS` | `60` | janela do limite de entrada, em segundos |
